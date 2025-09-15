@@ -64,3 +64,5 @@ class QTrainer:
         # preds[argmax(action)]=Q_new
         self.optimizer.zero_grad()
         loss=self.criterion(target,pred)
+        loss.backward()
+        self.optimizer.step()
