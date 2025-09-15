@@ -23,7 +23,7 @@ BLUE2 = (0, 100, 255)
 BLACK = (0,0,0)
 
 BLOCK_SIZE = 20
-SPEED = 20
+SPEED = 50
 
 class SnakeGame:
     
@@ -70,7 +70,7 @@ class SnakeGame:
             
         
         # 2. move
-        self._move(self.action) # update the head
+        self._move(action) # update the head
         self.snake.insert(0, self.head)
         
         # 3. check if game over
@@ -93,7 +93,7 @@ class SnakeGame:
         self._update_ui()
         self.clock.tick(SPEED)
         # 6. return game over and score
-        return game_over, self.score, reward
+        return reward, game_over, self.score
     
     def is_collision(self, pt=None):
         if pt is None:

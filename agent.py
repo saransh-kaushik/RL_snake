@@ -3,6 +3,8 @@ import random
 import numpy as np
 from game import SnakeGame, Direction, Point, BLOCK_SIZE
 from collections import deque
+from model import Linear_QNet, QTrainer
+from helper import plot
 
 
 MAX_MEMORY = 100_000
@@ -15,9 +17,10 @@ class Agent:
         self.epsilon = 0 # randomness
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-        self.model = None
-        self.trainer = None
-        # TODO: Initialize your model, optimizer, and loss function here
+        self.model = Linear_QNet(11, 256, 3)
+        self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+
+
 
     def get_state(self, game):
         head = game.snake[0]
@@ -90,7 +93,7 @@ class Agent:
             final_move[move] = 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model.predict()
+            prediction = self.model(state0)  #predict with model
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
@@ -126,9 +129,15 @@ def train():
 
             if score > record:
                 record = score
-                #TODO: Save the model
+                agent.model.save()
             print('Game', agent.n_games, 'Score', score, 'Record:', record)
+
             #TODO plot_scores.append(score)
+            plot_scores.append(score)
+            total_score += score
+            mean_score = total_score / agent.n_games
+            plot_mean_scores.append(mean_score)
+            plot(plot_scores, plot_mean_scores)
 
 if __name__ == '__main__':
     train()
